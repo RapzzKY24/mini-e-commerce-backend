@@ -1,14 +1,23 @@
 require("dotenv").config();
 const Hapi = require("@hapi/hapi");
 
+//execptions
+const ClientError = require("./execptions/ClientError");
+
 //categories
 const CategoriesService = require("./services/categories/categories.service");
 const CategoriesValidator = require("./validator/categories");
 const categories = require("./api/categories/categories.index");
-const ClientError = require("./execptions/ClientError");
+
+//products
+const ProductsService = require("./services/products/products.service");
+const ProductsValidator = require("./validator/products");
+const products = require("./api/products/products.index");
 
 const init = async () => {
+  //services
   const categoriesService = new CategoriesService();
+  const productsService = new ProductsService();
 
   const server = Hapi.server({
     host: process.env.HOST,
@@ -27,6 +36,13 @@ const init = async () => {
       options: {
         service: categoriesService,
         validator: CategoriesValidator,
+      },
+    },
+    {
+      plugin: products,
+      options: {
+        service: productsService,
+        validator: ProductsValidator,
       },
     },
   ]);

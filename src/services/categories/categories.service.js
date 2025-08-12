@@ -13,6 +13,9 @@ class CategoriesService {
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
+    //check existing name
+    await this.checkName(name);
+
     const query = {
       text: "INSERT INTO categories VALUES($1,$2,$3,$4,$5) RETURNING id",
       values: [id, name, description, createdAt, updatedAt],
@@ -27,8 +30,25 @@ class CategoriesService {
     return result.rows[0].id;
   }
 
+  async checkName(name) {
+    const query = {
+      text: "SELECT name FROM categories WHERE name = $1",
+      values: [name],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rowCount > 0) {
+      throw new InvariantError("Nama kategori sudah tersedia");
+    }
+  }
+
   async getCategories() {
     const results = await this._pool.query("SELECT * FROM categories");
+
+    if (!results.rowCount) {
+      throw new NotFoundError("Kategori belum tersedia");
+    }
 
     return results.rows;
   }

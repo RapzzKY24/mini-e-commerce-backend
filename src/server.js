@@ -14,10 +14,16 @@ const ProductsService = require("./services/products/products.service");
 const ProductsValidator = require("./validator/products");
 const products = require("./api/products/products.index");
 
+//users
+const UsersService = require("./services/users/users.service");
+const UsersValidator = require("./validator/users");
+const users = require("./api/users/users.index");
+
 const init = async () => {
   //services
   const categoriesService = new CategoriesService();
   const productsService = new ProductsService();
+  const usersService = new UsersService();
 
   const server = Hapi.server({
     host: process.env.HOST,
@@ -43,6 +49,13 @@ const init = async () => {
       options: {
         service: productsService,
         validator: ProductsValidator,
+      },
+    },
+    {
+      plugin: users,
+      options: {
+        service: usersService,
+        validator: UsersValidator,
       },
     },
   ]);

@@ -3,6 +3,7 @@ const InvariantError = require("../../execptions/InvariantError");
 const NotFoundError = require("../../execptions/NotFoundError");
 const { nanoid } = require("nanoid");
 const bcrypt = require("bcrypt");
+const AuthenticationError = require("../../execptions/AuthenticationError");
 
 class UsersService {
   constructor() {
@@ -118,6 +119,29 @@ class UsersService {
     if (result.rowCount > 0) {
       throw new InvariantError("Email pengguna sudah tersedia");
     }
+  }
+
+  async verifyUserCredential(name, password) {
+    const query = {
+      text: "SELECT id,password FROM users where name = $1",
+      values: [name],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new AuthenticationError("Kredensial pengguna salah");
+    }
+
+    const { id, password: hashedPassword } = result.rows[0];
+
+    const match = await bcrypt.compare(password, hashedPassword);
+
+    if (!match) {
+      throw new AuthenticationError("Kredensial pengguna salah");
+    }
+
+    return id;
   }
 }
 

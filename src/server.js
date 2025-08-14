@@ -1,5 +1,6 @@
 require("dotenv").config();
 const Hapi = require("@hapi/hapi");
+const Jwt = require("@hapi/jwt");
 
 //execptions
 const ClientError = require("./execptions/ClientError");
@@ -19,8 +20,15 @@ const UsersService = require("./services/users/users.service");
 const UsersValidator = require("./validator/users");
 const users = require("./api/users/users.index");
 
+//authentication
+const AuthenticationsService = require("./services/authentications/authentications.service");
+const AuthenticationsValidator = require("./validator/authentications");
+const authentication = require("./api/authentications/authentications.index");
+const TokenManager = require("./tokenize/TokenManager");
+
 const init = async () => {
   //services
+  const authenticationsService = new AuthenticationsService();
   const categoriesService = new CategoriesService();
   const productsService = new ProductsService();
   const usersService = new UsersService();
@@ -33,6 +41,30 @@ const init = async () => {
         origin: ["*"],
       },
     },
+  });
+
+  // registrasi plugin eksternal
+  await server.register([
+    {
+      plugin: Jwt,
+    },
+  ]);
+
+  // mendefinisikan strategy autentikasi jwt
+  server.auth.strategy("miniEcommerce_jwt", "jwt", {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
+      },
+    }),
   });
 
   //register plugin
@@ -56,6 +88,15 @@ const init = async () => {
       options: {
         service: usersService,
         validator: UsersValidator,
+      },
+    },
+    {
+      plugin: authentication,
+      options: {
+        authenticationsService,
+        usersService,
+        tokenManager: TokenManager,
+        validator: AuthenticationsValidator,
       },
     },
   ]);

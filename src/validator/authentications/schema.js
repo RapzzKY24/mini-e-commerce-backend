@@ -6,7 +6,7 @@ const postAuthenticationsPayloadSchema = Joi.object({
 });
 
 const putAuthenticationsPayloadSchema = Joi.object({
-  refreshToken: Joi.string().required,
+  refreshToken: Joi.string().required(),
 });
 
 const deleteAuthenticationsPayloadSchema = Joi.object({

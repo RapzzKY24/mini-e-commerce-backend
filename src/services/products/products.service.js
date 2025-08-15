@@ -61,7 +61,9 @@ class ProductsService {
   }
 
   async getProducts() {
-    const results = await this._pool.query("SELECT * FROM products");
+    const results = await this._pool.query(
+      "SELECT p.id ,c.name AS category_name,c.description AS category_description, p.name AS product_name,p.description AS product_description, p.price,p.stock,p.image_url FROM products AS p JOIN categories AS c ON p.category_id = c.id"
+    );
 
     if (!results.rowCount) {
       throw new NotFoundError("Produk belum tersedia");
@@ -72,7 +74,7 @@ class ProductsService {
 
   async getProductById(id) {
     const query = {
-      text: "SELECT * FROM products WHERE id = $1",
+      text: "SELECT c.name AS category_name,c.description AS category_description, p.name AS product_name,p.description AS product_description, p.price,p.stock,p.image_url FROM products AS p JOIN categories AS c ON p.category_id = c.id WHERE p.id = $1",
       values: [id],
     };
 

@@ -3,10 +3,16 @@ class CartsHandler {
     this._service = service;
     this._validator = validator;
 
+    //cart
     this.postCartHandler = this.postCartHandler.bind(this);
-    this.getCartByIdHandler = this.getCartByIdHandler.bind(this);
-    this.getCartsByUserIdHandler = this.getCartsByUserIdHandler.bind(this);
+    this.getCartByUserIdHandler = this.getCartByUserIdHandler.bind(this);
     this.deleteCartByIdHandler = this.deleteCartByIdHandler.bind(this);
+
+    //cart-items
+    this.postCartItemsHandler = this.postCartItemsHandler.bind(this);
+    this.getCartDetailsHandler = this.getCartDetailsHandler.bind(this);
+    this.deleteProductFromCartHandler =
+      this.deleteProductFromCartHandler.bind(this);
   }
 
   async postCartHandler(req, h) {
@@ -27,24 +33,43 @@ class CartsHandler {
     return response;
   }
 
-  async getCartByIdHandler(req) {
+  async postCartItemsHandler(req, h) {
+    await this._validator.validateCartItemsPayloadSchema(req.payload);
+
+    const { productId, cartId, quantity } = req.payload;
+
+    await this._service.addProductsToCart({
+      productId,
+      cartId,
+      quantity,
+    });
+
+    const response = h.response({
+      status: "success",
+      message: "Berhasil menambahkan produk ke keranjang",
+    });
+    response.code(201);
+    return response;
+  }
+
+  async getCartDetailsHandler(req) {
     const { id } = req.params;
 
-    const cart = await this._service.getCartById(id);
+    const cartDetails = await this._service.getDetailsCart(id);
 
     return {
       status: "success",
-      message: "berhasil mendapatkan keranjang",
+      message: "Berhasil mendapatkan detail keranjang",
       data: {
-        cart,
+        cartDetails,
       },
     };
   }
 
-  async getCartsByUserIdHandler(req) {
+  async getCartByUserIdHandler(req) {
     const { user_id } = req.params;
 
-    const userCart = await this._service.getCartsByUserId(user_id);
+    const userCart = await this._service.getCartByUserId(user_id);
 
     return {
       status: "success",
@@ -63,6 +88,17 @@ class CartsHandler {
     return {
       status: "success",
       message: "Berhasil menghapus keranjang",
+    };
+  }
+
+  async deleteProductFromCartHandler(req) {
+    const { id } = req.params;
+
+    await this._service.deleteProductFromCart(id);
+
+    return {
+      status: "success",
+      message: "Berhasil menghapus produk dari keranjang",
     };
   }
 }

@@ -44,6 +44,82 @@ class CartsService {
     return result.rowCount > 0;
   }
 
+  async addProductsToCart({ productId, cartId, quantity }) {
+    const existingProduct = await this.checkProductOnCart(productId, cartId);
+
+    if (existingProduct) {
+      const newQuantity = existingProduct.quantity + quantity;
+      const updatedAt = new Date().toISOString();
+
+      const query = {
+        text: "UPDATE cart_items SET quantity = $1 , updated_at = $2 WHERE product_id = $3 AND cart_id = $4",
+        values: [newQuantity, updatedAt, productId, cartId],
+      };
+
+      const result = await this._pool.query(query);
+
+      if (!result.rowCount) {
+        throw new InvariantError(
+          "Gagal memperbarui jumlah produk di keranjang"
+        );
+      }
+    } else {
+      const id = `cart-items-${nanoid(16)}`;
+      const createdAt = new Date().toISOString();
+      const updatedAt = createdAt;
+
+      const query = {
+        text: "INSERT INTO cart_items VALUES ($1,$2,$3,$4,$5,$6)",
+        values: [id, productId, cartId, quantity, createdAt, updatedAt],
+      };
+
+      const result = await this._pool.query(query);
+
+      if (!result.rowCount) {
+        throw new InvariantError("Gagal menambahkan produk ke keranjang");
+      }
+    }
+  }
+
+  async checkProductOnCart(productId, cartId) {
+    const query = {
+      text: "SELECT quantity FROM cart_items WHERE product_id = $1 AND cart_id = $2",
+      values: [productId, cartId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rowCount > 0 ? result.rows[0] : null;
+  }
+
+  async getDetailsCart(cartId) {
+    const cart = await this.getCartById(cartId);
+
+    const query = {
+      text: `SELECT 
+              ci.product_id, 
+              ci.quantity, 
+              p.name, 
+              p.price,
+              (ci.quantity * p.price) AS total_price
+             FROM cart_items AS ci
+             JOIN products AS p ON ci.product_id = p.id
+             WHERE ci.cart_id = $1`,
+      values: [cartId],
+    };
+
+    const result = await this._pool.query(query);
+
+    const cartItems = result.rows;
+
+    const fullCartDetails = {
+      ...cart,
+      items: cartItems,
+    };
+
+    return fullCartDetails;
+  }
+
   async getCartById(id) {
     const query = {
       text: "SELECT * FROM carts WHERE id= $1",
@@ -59,7 +135,7 @@ class CartsService {
     return result.rows[0];
   }
 
-  async getCartsByUserId(userId) {
+  async getCartByUserId(userId) {
     const query = {
       text: "SELECT * FROM carts WHERE user_id= $1",
       values: [userId],
@@ -71,7 +147,22 @@ class CartsService {
       throw new NotFoundError("Keranjang belum ada, buat terlebih dahulu");
     }
 
-    return result.rows;
+    return result.rows[0];
+  }
+
+  async deleteProductFromCart(cartItemsId) {
+    const query = {
+      text: "DELETE FROM cart_items WHERE id = $1",
+      values: [cartItemsId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError(
+        "Produk gagal dihapus dari keranjang. ID tidak ditemukan."
+      );
+    }
   }
 
   async deleteCartById(id) {

@@ -26,12 +26,18 @@ const AuthenticationsValidator = require("./validator/authentications");
 const authentication = require("./api/authentications/authentications.index");
 const TokenManager = require("./tokenize/TokenManager");
 
+//carts
+const CartsService = require("./services/carts/carts.service");
+const CartsValidator = require("./validator/carts");
+const carts = require("./api/carts/carts.index");
+
 const init = async () => {
   //services
   const authenticationsService = new AuthenticationsService();
   const categoriesService = new CategoriesService();
   const productsService = new ProductsService();
   const usersService = new UsersService();
+  const cartsService = new CartsService();
 
   const server = Hapi.server({
     host: process.env.HOST,
@@ -97,6 +103,13 @@ const init = async () => {
         usersService,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,
+      },
+    },
+    {
+      plugin: carts,
+      options: {
+        service: cartsService,
+        validator: CartsValidator,
       },
     },
   ]);

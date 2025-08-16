@@ -31,6 +31,11 @@ const CartsService = require("./services/carts/carts.service");
 const CartsValidator = require("./validator/carts");
 const carts = require("./api/carts/carts.index");
 
+//orders
+const OrdersService = require("./services/orders/orders.service");
+const OrdersValidator = require("./validator/orders");
+const orders = require("./api/orders/orders.index");
+
 const init = async () => {
   //services
   const authenticationsService = new AuthenticationsService();
@@ -38,6 +43,7 @@ const init = async () => {
   const productsService = new ProductsService();
   const usersService = new UsersService();
   const cartsService = new CartsService();
+  const ordersService = new OrdersService(cartsService);
 
   const server = Hapi.server({
     host: process.env.HOST,
@@ -110,6 +116,14 @@ const init = async () => {
       options: {
         service: cartsService,
         validator: CartsValidator,
+      },
+    },
+    {
+      plugin: orders,
+      options: {
+        ordersService,
+        cartsService,
+        validator: OrdersValidator,
       },
     },
   ]);

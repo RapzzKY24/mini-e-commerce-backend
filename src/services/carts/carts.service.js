@@ -150,6 +150,45 @@ class CartsService {
     return result.rows[0];
   }
 
+  async getCartDetailsByUserId(userId) {
+    const queryCart = {
+      text: "SELECT id, user_id FROM carts WHERE user_id = $1",
+      values: [userId],
+    };
+
+    const resultCart = await this._pool.query(queryCart);
+
+    if (!resultCart.rowCount) {
+      throw new NotFoundError("Keranjang belum ada untuk pengguna ini");
+    }
+
+    const cart = resultCart.rows[0];
+
+    const queryItems = {
+      text: `SELECT 
+            ci.product_id, 
+            ci.quantity, 
+            p.name, 
+            p.price,
+            (ci.quantity * p.price) AS total_price
+           FROM cart_items AS ci
+           JOIN products AS p ON ci.product_id = p.id
+           WHERE ci.cart_id = $1`,
+      values: [cart.id],
+    };
+
+    const resultItems = await this._pool.query(queryItems);
+
+    const cartItems = resultItems.rows;
+
+    const fullCartDetails = {
+      ...cart,
+      items: cartItems,
+    };
+
+    return fullCartDetails;
+  }
+
   async deleteProductFromCart(cartItemsId) {
     const query = {
       text: "DELETE FROM cart_items WHERE id = $1",

@@ -122,7 +122,7 @@ class CartsService {
 
   async getCartById(id) {
     const query = {
-      text: "SELECT * FROM carts WHERE id= $1",
+      text: "SELECT c.id, c.user_id, u.name AS user_name FROM carts AS c JOIN users AS u ON c.user_id = u.id WHERE c.id = $1",
       values: [id],
     };
 

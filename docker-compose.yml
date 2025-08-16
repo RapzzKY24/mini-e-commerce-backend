@@ -1,0 +1,27 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    env_file:
+      - .env
+    command: npm run start:dev
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: mini_ecommerces
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: supersecretpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

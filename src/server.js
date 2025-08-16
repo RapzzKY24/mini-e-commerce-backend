@@ -46,8 +46,8 @@ const init = async () => {
   const ordersService = new OrdersService(cartsService);
 
   const server = Hapi.server({
-    host: process.env.HOST,
-    port: process.env.PORT,
+    host: process.env.HOST || 3001,
+    port: process.env.PORT || "0.0.0.0",
     routes: {
       cors: {
         origin: ["*"],

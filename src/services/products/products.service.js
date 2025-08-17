@@ -72,6 +72,21 @@ class ProductsService {
     return results.rows;
   }
 
+  async getProductByName(name) {
+    const query = {
+      text: "SELECT c.name AS category_name,c.description AS category_description, p.name AS product_name,p.description AS product_description, p.price,p.stock,p.image_url FROM products AS p JOIN categories AS c ON p.category_id = c.id WHERE p.name ILIKE $1",
+      values: [`%${name}%`],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError("Nama produk tidak tersedia");
+    }
+
+    return result.rows[0];
+  }
+
   async getProductById(id) {
     const query = {
       text: "SELECT c.name AS category_name,c.description AS category_description, p.name AS product_name,p.description AS product_description, p.price,p.stock,p.image_url FROM products AS p JOIN categories AS c ON p.category_id = c.id WHERE p.id = $1",
@@ -111,6 +126,21 @@ class ProductsService {
 
     if (!result.rowCount) {
       throw new NotFoundError("Id produk tidak tersedia");
+    }
+  }
+
+  async decreaseProductStock(id, quantity) {
+    const updatedAt = new Date().toISOString();
+
+    const query = {
+      text: "UPDATE products SET stock = stock - $1 , updated_at = $2 WHERE id = $3",
+      values: [quantity, updatedAt, id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError("Id produk tidak ditemukan");
     }
   }
 

@@ -4,8 +4,9 @@ const InvariantError = require("../../execptions/InvariantError");
 const NotFoundError = require("../../execptions/NotFoundError");
 
 class CartsService {
-  constructor() {
+  constructor(productsService) {
     this._pool = new Pool();
+    this._productsService = productsService;
   }
 
   async addCart(userId) {
@@ -45,11 +46,17 @@ class CartsService {
   }
 
   async addProductsToCart({ productId, cartId, quantity }) {
+    const product = await this._productsService.getProductById(productId);
+
     const existingProduct = await this.checkProductOnCart(productId, cartId);
 
     if (existingProduct) {
       const newQuantity = existingProduct.quantity + quantity;
       const updatedAt = new Date().toISOString();
+
+      if (newQuantity > product.stock) {
+        throw new InvariantError("Jumlah stock barang kurang");
+      }
 
       const query = {
         text: "UPDATE cart_items SET quantity = $1 , updated_at = $2 WHERE product_id = $3 AND cart_id = $4",
@@ -64,6 +71,10 @@ class CartsService {
         );
       }
     } else {
+      if (quantity > product.stock) {
+        throw new InvariantError("Jumlah produk melebihi stok yang tersedia");
+      }
+
       const id = `cart-items-${nanoid(16)}`;
       const createdAt = new Date().toISOString();
       const updatedAt = createdAt;

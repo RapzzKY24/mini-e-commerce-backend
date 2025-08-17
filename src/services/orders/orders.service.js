@@ -4,9 +4,10 @@ const InvariantError = require("../../execptions/InvariantError");
 const NotFoundError = require("../../execptions/NotFoundError");
 
 class OrdersService {
-  constructor(cartsService) {
+  constructor(cartsService, productsService) {
     this._pool = new Pool();
     this._cartsService = cartsService;
+    this._productsService = productsService;
   }
 
   async createOrders({ userId, shippingAddress }) {
@@ -75,6 +76,11 @@ class OrdersService {
       };
 
       await this._pool.query(query);
+
+      await this._productsService.decreaseProductStock(
+        item.product_id,
+        item.quantity
+      );
     }
   }
 

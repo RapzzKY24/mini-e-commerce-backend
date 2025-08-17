@@ -37,13 +37,13 @@ const OrdersValidator = require("./validator/orders");
 const orders = require("./api/orders/orders.index");
 
 const init = async () => {
-  //services
+  //instance
   const authenticationsService = new AuthenticationsService();
   const categoriesService = new CategoriesService();
   const productsService = new ProductsService();
   const usersService = new UsersService();
-  const cartsService = new CartsService();
-  const ordersService = new OrdersService(cartsService);
+  const cartsService = new CartsService(productsService);
+  const ordersService = new OrdersService(cartsService, productsService);
 
   const server = Hapi.server({
     host: process.env.HOST || 3001,

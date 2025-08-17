@@ -53,6 +53,21 @@ class CategoriesService {
     return results.rows;
   }
 
+  async getCategoryByName(name) {
+    const query = {
+      text: "SELECT * FROM categories WHERE name  ILIKE $1",
+      values: [`%${name}%`],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError("Kategori tidak ditemukan");
+    }
+
+    return result.rows[0];
+  }
+
   async getCategoryById(id) {
     const query = {
       text: "SELECT * FROM categories WHERE id = $1",

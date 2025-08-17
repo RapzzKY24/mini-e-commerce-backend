@@ -27,8 +27,17 @@ class CategoriesHandler {
     return response;
   }
 
-  async getCategoriesHandler() {
-    const categories = await this._service.getCategories();
+  async getCategoriesHandler(req) {
+    const { name } = req.query;
+
+    let categories;
+
+    if (name) {
+      categories = await this._service.getCategoryByName(name);
+    } else {
+      categories = await this._service.getCategories();
+    }
+
     return {
       status: "success",
       message: "Berhasil mendapatkan seluruh kategori",

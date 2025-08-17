@@ -36,8 +36,15 @@ class ProductsHandler {
     return response;
   }
 
-  async getProductsHandler() {
-    const products = await this._service.getProducts();
+  async getProductsHandler(req) {
+    const { name } = req.query;
+
+    let products;
+    if (name) {
+      products = await this._service.getProductByName(name);
+    } else {
+      products = await this._service.getProducts();
+    }
 
     return {
       status: "success",

@@ -46,49 +46,65 @@ class CartsService {
   }
 
   async addProductsToCart({ productId, cartId, quantity }) {
-    const product = await this._productsService.getProductById(productId);
+    const client = await this._pool.connect();
 
-    const existingProduct = await this.checkProductOnCart(productId, cartId);
+    try {
+      await client.query("BEGIN");
 
-    if (existingProduct) {
-      const newQuantity = existingProduct.quantity + quantity;
-      const updatedAt = new Date().toISOString();
+      const product = await this._productsService.getProductById(productId);
+      const existingProduct = await this.checkProductOnCart(productId, cartId);
 
-      if (newQuantity > product.stock) {
-        throw new InvariantError("Jumlah stock barang kurang");
+      if (existingProduct) {
+        const newQuantity = existingProduct.quantity + quantity;
+        const updatedAt = new Date().toISOString();
+
+        if (newQuantity > product.stock) {
+          throw new InvariantError("Jumlah stock barang kurang");
+        }
+
+        const query = {
+          text: `UPDATE cart_items 
+               SET quantity = $1, updated_at = $2 
+               WHERE product_id = $3 AND cart_id = $4`,
+          values: [newQuantity, updatedAt, productId, cartId],
+        };
+
+        const result = await client.query(query);
+
+        if (!result.rowCount) {
+          throw new InvariantError(
+            "Gagal memperbarui jumlah produk di keranjang"
+          );
+        }
+      } else {
+        if (quantity > product.stock) {
+          throw new InvariantError("Jumlah produk melebihi stok yang tersedia");
+        }
+
+        const id = `cart-items-${nanoid(16)}`;
+        const createdAt = new Date().toISOString();
+        const updatedAt = createdAt;
+
+        const query = {
+          text: `INSERT INTO cart_items 
+               (id, product_id, cart_id, quantity, created_at, updated_at) 
+               VALUES ($1,$2,$3,$4,$5,$6)`,
+          values: [id, productId, cartId, quantity, createdAt, updatedAt],
+        };
+
+        const result = await client.query(query);
+
+        if (!result.rowCount) {
+          throw new InvariantError("Gagal menambahkan produk ke keranjang");
+        }
       }
 
-      const query = {
-        text: "UPDATE cart_items SET quantity = $1 , updated_at = $2 WHERE product_id = $3 AND cart_id = $4",
-        values: [newQuantity, updatedAt, productId, cartId],
-      };
-
-      const result = await this._pool.query(query);
-
-      if (!result.rowCount) {
-        throw new InvariantError(
-          "Gagal memperbarui jumlah produk di keranjang"
-        );
-      }
-    } else {
-      if (quantity > product.stock) {
-        throw new InvariantError("Jumlah produk melebihi stok yang tersedia");
-      }
-
-      const id = `cart-items-${nanoid(16)}`;
-      const createdAt = new Date().toISOString();
-      const updatedAt = createdAt;
-
-      const query = {
-        text: "INSERT INTO cart_items VALUES ($1,$2,$3,$4,$5,$6)",
-        values: [id, productId, cartId, quantity, createdAt, updatedAt],
-      };
-
-      const result = await this._pool.query(query);
-
-      if (!result.rowCount) {
-        throw new InvariantError("Gagal menambahkan produk ke keranjang");
-      }
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw new InvariantError(error.message);
+    } finally {
+      client.release();
     }
   }
 

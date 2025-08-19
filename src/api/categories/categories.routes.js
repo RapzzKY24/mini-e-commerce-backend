@@ -1,3 +1,5 @@
+const checkAdminRole = require("../middlewares/checkAdminRole");
+
 const routes = (handler) => [
   {
     method: "POST",
@@ -5,7 +7,7 @@ const routes = (handler) => [
     handler: handler.postCategoryHandler,
     options: {
       auth: "miniEcommerce_jwt",
-      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
+      pre: [{ method: checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -27,7 +29,7 @@ const routes = (handler) => [
     handler: handler.putCategoryByIdHandler,
     options: {
       auth: "miniEcommerce_jwt",
-      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
+      pre: [{ method: checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -36,7 +38,7 @@ const routes = (handler) => [
     handler: handler.deleteCategoryByIdHandler,
     options: {
       auth: "miniEcommerce_jwt",
-      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
+      pre: [{ method: checkAdminRole, assign: "checkAdmin" }],
     },
   },
 ];

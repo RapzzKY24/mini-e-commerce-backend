@@ -1,3 +1,5 @@
+const checkAdminRole = require("../middlewares/checkAdminRole");
+
 const routes = (handler) => [
   {
     method: "GET",
@@ -5,7 +7,7 @@ const routes = (handler) => [
     handler: handler.getDashboardDataHandler,
     options: {
       auth: "miniEcommerce_jwt",
-      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
+      pre: [{ method: checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -14,7 +16,7 @@ const routes = (handler) => [
     handler: handler.getProductsSoldHandler,
     options: {
       auth: "miniEcommerce_jwt",
-      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
+      pre: [{ method: checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -23,7 +25,7 @@ const routes = (handler) => [
     handler: handler.getTotalProfitHandler,
     options: {
       auth: "miniEcommerce_jwt",
-      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
+      pre: [{ method: checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -32,7 +34,7 @@ const routes = (handler) => [
     handler: handler.getDailySalesHandler,
     options: {
       auth: "miniEcommerce_jwt",
-      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
+      pre: [{ method: checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -41,7 +43,7 @@ const routes = (handler) => [
     handler: handler.getRevenueByProductHandler,
     options: {
       auth: "miniEcommerce_jwt",
-      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
+      pre: [{ method: checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -50,7 +52,7 @@ const routes = (handler) => [
     handler: handler.getDashboardSummaryHandler,
     options: {
       auth: "miniEcommerce_jwt",
-      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
+      pre: [{ method: checkAdminRole, assign: "checkAdmin" }],
     },
   },
 ];

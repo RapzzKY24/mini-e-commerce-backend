@@ -10,18 +10,6 @@ class CategoriesHandler {
     this.getCategoryByIdHandler = this.getCategoryByIdHandler.bind(this);
     this.putCategoryByIdHandler = this.putCategoryByIdHandler.bind(this);
     this.deleteCategoryByIdHandler = this.deleteCategoryByIdHandler.bind(this);
-    this.checkAdminRole = this.checkAdminRole.bind(this);
-  }
-
-  async checkAdminRole(req, h) {
-    const { role } = req.auth.credentials;
-
-    if (role !== "admin") {
-      throw new AuthorizationError(
-        " Oops! Sepertinya Anda tidak memiliki izin untuk mengakses halaman ini."
-      );
-    }
-    return h.continue;
   }
 
   async postCategoryHandler(req, h) {

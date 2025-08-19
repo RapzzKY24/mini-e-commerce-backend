@@ -1,3 +1,5 @@
+const AuthorizationError = require("../../execptions/AuthorizationError");
+
 class DashboardHandler {
   constructor(service) {
     this._service = service;
@@ -10,6 +12,18 @@ class DashboardHandler {
       this.getRevenueByProductHandler.bind(this);
     this.getDashboardSummaryHandler =
       this.getDashboardSummaryHandler.bind(this);
+    this.checkAdminRole = this.checkAdminRole.bind(this);
+  }
+
+  async checkAdminRole(req, h) {
+    const { role } = req.auth.credentials;
+
+    if (role !== "admin") {
+      throw new AuthorizationError(
+        " Oops! Sepertinya Anda tidak memiliki izin untuk mengakses halaman ini."
+      );
+    }
+    return h.continue;
   }
 
   async getDashboardDataHandler() {
@@ -21,7 +35,8 @@ class DashboardHandler {
     };
   }
 
-  async getProductsSoldHandler() {
+  async getProductsSoldHandler(req) {
+    console.log(req.auth.credentials);
     const productsSold = await this._service.getProductsSold();
     return {
       status: "success",

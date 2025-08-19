@@ -3,6 +3,10 @@ const routes = (handler) => [
     method: "POST",
     path: "/users",
     handler: handler.postUserHandler,
+    options: {
+      auth: "miniEcommerce_jwt",
+      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
+    },
   },
   {
     method: "GET",
@@ -10,6 +14,7 @@ const routes = (handler) => [
     handler: handler.getUsersHandler,
     options: {
       auth: "miniEcommerce_jwt",
+      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -18,6 +23,7 @@ const routes = (handler) => [
     handler: handler.getUserByNameHandler,
     options: {
       auth: "miniEcommerce_jwt",
+      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -26,6 +32,7 @@ const routes = (handler) => [
     handler: handler.putUserByIdHandler,
     options: {
       auth: "miniEcommerce_jwt",
+      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -34,6 +41,7 @@ const routes = (handler) => [
     handler: handler.deleteUserByIdHandler,
     options: {
       auth: "miniEcommerce_jwt",
+      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
     },
   },
 ];

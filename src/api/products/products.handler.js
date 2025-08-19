@@ -1,3 +1,4 @@
+const AuthorizationError = require("../../execptions/AuthorizationError");
 class ProductsHandler {
   constructor(service, validator) {
     this._service = service;
@@ -8,6 +9,18 @@ class ProductsHandler {
     this.getProductByIdHandler = this.getProductByIdHandler.bind(this);
     this.putProductByIdHandler = this.putProductByIdHandler.bind(this);
     this.deleteProductByIdHandler = this.deleteProductByIdHandler.bind(this);
+    this.checkAdminRole = this.checkAdminRole.bind(this);
+  }
+
+  async checkAdminRole(req, h) {
+    const { role } = req.auth.credentials;
+
+    if (role !== "admin") {
+      throw new AuthorizationError(
+        " Oops! Sepertinya Anda tidak memiliki izin untuk mengakses halaman ini."
+      );
+    }
+    return h.continue;
   }
 
   async postProductHandler(req, h) {

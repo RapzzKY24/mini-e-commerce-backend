@@ -80,6 +80,7 @@ const init = async () => {
       isValid: true,
       credentials: {
         id: artifacts.decoded.payload.id,
+        role: artifacts.decoded.payload.role,
       },
     }),
   });

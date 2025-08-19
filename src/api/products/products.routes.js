@@ -5,6 +5,7 @@ const routes = (handler) => [
     handler: handler.postProductHandler,
     options: {
       auth: "miniEcommerce_jwt",
+      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -29,6 +30,7 @@ const routes = (handler) => [
     handler: handler.putProductByIdHandler,
     options: {
       auth: "miniEcommerce_jwt",
+      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
     },
   },
   {
@@ -37,6 +39,7 @@ const routes = (handler) => [
     handler: handler.deleteProductByIdHandler,
     options: {
       auth: "miniEcommerce_jwt",
+      pre: [{ method: handler.checkAdminRole, assign: "checkAdmin" }],
     },
   },
 ];

@@ -13,18 +13,12 @@ class DashboardHandler {
   }
 
   async getDashboardDataHandler() {
-    try {
-      const dataDashboard = await this._service.getDashboardData();
-      return {
-        status: "success",
-        message: "Berhasil mendapatkan semua data dashboard",
-        data: dataDashboard,
-      };
-    } catch (error) {
-      return {
-        msg: error.message,
-      };
-    }
+    const dataDashboard = await this._service.getDashboardData();
+    return {
+      status: "success",
+      message: "Berhasil mendapatkan semua data dashboard",
+      data: dataDashboard,
+    };
   }
 
   async getProductsSoldHandler() {
@@ -55,18 +49,12 @@ class DashboardHandler {
   }
 
   async getRevenueByProductHandler() {
-    try {
-      const revenueByCategory = await this._service.getRevenueByProduct();
-      return {
-        status: "success",
-        message: "Berhasil mendapatkan data revenue per kategori",
-        data: revenueByCategory,
-      };
-    } catch (error) {
-      return {
-        msg: error.message,
-      };
-    }
+    const revenueByCategory = await this._service.getRevenueByProduct();
+    return {
+      status: "success",
+      message: "Berhasil mendapatkan data revenue per kategori",
+      data: revenueByCategory,
+    };
   }
 
   async getDashboardSummaryHandler() {

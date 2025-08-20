@@ -26,6 +26,11 @@ const AuthenticationsValidator = require("./validator/authentications");
 const authentication = require("./api/authentications/authentications.index");
 const TokenManager = require("./tokenize/TokenManager");
 
+//register
+const RegisterService = require("./services/register/register.service");
+const RegisterValidator = require("./validator/register");
+const register = require("./api/register/register.index");
+
 //carts
 const CartsService = require("./services/carts/carts.service");
 const CartsValidator = require("./validator/carts");
@@ -46,6 +51,7 @@ const init = async () => {
   const categoriesService = new CategoriesService();
   const productsService = new ProductsService();
   const usersService = new UsersService();
+  const registerService = new RegisterService(usersService);
   const cartsService = new CartsService(productsService);
   const ordersService = new OrdersService(cartsService, productsService);
   const dashboardService = new DashboardService();
@@ -115,6 +121,13 @@ const init = async () => {
         usersService,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,
+      },
+    },
+    {
+      plugin: register,
+      options: {
+        registerService,
+        validator: RegisterValidator,
       },
     },
     {

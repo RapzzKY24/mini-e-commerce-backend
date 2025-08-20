@@ -11,7 +11,7 @@ class UsersService {
     this.SALT_ROUND = 10;
   }
 
-  async addUser({ name, email, password, role = "customer" }) {
+  async _addUserCore({ name, email, password, role }) {
     const id = `user-${nanoid(16)}`;
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
@@ -31,6 +31,10 @@ class UsersService {
       throw new InvariantError("Pengguna gagal ditambahkan");
     }
     return result.rows[0].id;
+  }
+
+  async addUser({ name, email, password, role }) {
+    return this._addUserCore({ name, email, password, role });
   }
 
   async getUsers() {

@@ -12,7 +12,7 @@ class RegisterHandler {
 
       const { email, name, password } = req.payload;
 
-      const userId = await this._regsiterService.addUser({
+      const userId = await this._regsiterService.register({
         email,
         name,
         password,

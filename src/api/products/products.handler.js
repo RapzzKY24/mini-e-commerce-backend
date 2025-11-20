@@ -50,9 +50,7 @@ class ProductsHandler {
     return {
       status: "success",
       message: "Berhasil mendapatkan seluruh produk",
-      data: {
-        products,
-      },
+      products,
     };
   }
 

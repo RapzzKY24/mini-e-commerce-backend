@@ -43,9 +43,7 @@ class CategoriesHandler {
     return {
       status: "success",
       message: "Berhasil mendapatkan seluruh kategori",
-      data: {
-        categories,
-      },
+      categories,
     };
   }
 
@@ -56,9 +54,7 @@ class CategoriesHandler {
     return {
       status: "success",
       message: `berhasil mendapatkan categories ${id}`,
-      data: {
-        category,
-      },
+      category,
     };
   }
 

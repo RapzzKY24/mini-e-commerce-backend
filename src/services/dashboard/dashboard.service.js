@@ -8,14 +8,14 @@ class DashboardService {
   async getProductsSold() {
     const query = {
       text: `SELECT
-                    oi.product_name,
-                    SUM(oi.quantity) as total_sold,
-                    COUNT(DISTINCT oi.order_id) as total_orders
-                   FROM order_items oi
-                   INNER JOIN orders o ON oi.order_id = o.id
-                   WHERE o.status = 'DELIVERED'
-                   GROUP BY oi.product_name
-                   ORDER BY total_sold DESC`,
+                  oi.product_name,
+                  SUM(oi.quantity) as total_sold,
+                  COUNT(DISTINCT oi.order_id) as total_orders
+                  FROM order_items oi
+                  INNER JOIN orders o ON oi.order_id = o.id
+                  WHERE o.status = 'DELIVERED'
+                  GROUP BY oi.product_name
+                  ORDER BY total_sold DESC`,
     };
     const result = await this._pool.query(query);
     return result.rows;

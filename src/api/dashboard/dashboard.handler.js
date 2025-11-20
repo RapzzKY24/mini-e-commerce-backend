@@ -19,7 +19,7 @@ class DashboardHandler {
     return {
       status: "success",
       message: "Berhasil mendapatkan semua data dashboard",
-      data: dataDashboard,
+      dataDashboard,
     };
   }
 
@@ -29,7 +29,7 @@ class DashboardHandler {
     return {
       status: "success",
       message: "Berhasil mendapatkan data produk terjual",
-      data: productsSold,
+      productsSold,
     };
   }
 
@@ -47,7 +47,7 @@ class DashboardHandler {
     return {
       status: "success",
       message: "Berhasil mendapatkan data penjualan harian",
-      data: dailySales,
+      dailySales,
     };
   }
 
@@ -56,7 +56,7 @@ class DashboardHandler {
     return {
       status: "success",
       message: "Berhasil mendapatkan data revenue per kategori",
-      data: revenueByCategory,
+      revenueByCategory,
     };
   }
 
@@ -65,7 +65,7 @@ class DashboardHandler {
     return {
       status: "success",
       message: "Berhasil mendapatkan ringkasan dashboard",
-      data: summary,
+      summary,
     };
   }
 }

@@ -63,9 +63,7 @@ class AuthenticationsHandler {
     return {
       status: "success",
       message: "token berhasil diperbarui",
-      data: {
-        accessToken,
-      },
+      accessToken,
     };
   }
 

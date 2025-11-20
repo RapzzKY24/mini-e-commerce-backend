@@ -57,8 +57,8 @@ const init = async () => {
   const dashboardService = new DashboardService();
 
   const server = Hapi.server({
-    host: process.env.HOST || 3001,
-    port: process.env.PORT || "0.0.0.0",
+    host: process.env.HOST,
+    port: process.env.PORT,
     routes: {
       cors: {
         origin: ["*"],

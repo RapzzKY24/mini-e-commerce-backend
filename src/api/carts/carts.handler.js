@@ -25,9 +25,7 @@ class CartsHandler {
     const response = h.response({
       status: "success",
       message: "Berhasil membuat keranjang",
-      data: {
-        cartId,
-      },
+      cartId,
     });
     response.code(201);
     return response;
@@ -60,9 +58,7 @@ class CartsHandler {
     return {
       status: "success",
       message: "Berhasil mendapatkan detail keranjang",
-      data: {
-        cartDetails,
-      },
+      cartDetails,
     };
   }
 
@@ -74,9 +70,7 @@ class CartsHandler {
     return {
       status: "success",
       message: "Berhasil mendapatkan data keranjang pengguna",
-      data: {
-        userCart,
-      },
+      userCart,
     };
   }
 

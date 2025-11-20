@@ -14,9 +14,9 @@ const routes = (handler) => [
     method: "GET",
     path: "/products",
     handler: handler.getProductsHandler,
-    options: {
-      auth: "miniEcommerce_jwt",
-    },
+    // options: {
+    //   auth: "miniEcommerce_jwt",
+    // },
   },
   {
     method: "GET",

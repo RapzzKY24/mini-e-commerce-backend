@@ -1,6 +1,4 @@
------
 
-````markdown
 # Mini E-Commerce Backend API
 
 A robust Backend API for a Mini E-Commerce application built using **Node.js**, **Hapi.js**, and **PostgreSQL**. This project provides a complete RESTful API architecture featuring JWT authentication, product management, shopping carts, order processing, and an analytical dashboard for administrators.
